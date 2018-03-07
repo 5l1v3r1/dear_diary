@@ -101,13 +101,18 @@ def dagboek_lezen():
 
         # Lezen
         dagboek = open(dagboeken[int(num)].split('.zez')[0]).read()
+
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         print('\n')
         print(dagboek)
+        print('\n')
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
         # Verwijder het ontsleutelde dagboek
         os.remove(dagboeken[int(num)].split('.zez')[0])
 
-
+    except KeyboardInterrupt:
+        return
     except Exception as e:
         print('[Error] %s\n' % e)
         num = input('#?: ')
@@ -117,17 +122,33 @@ key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa
 
 opt = True
 
+# Banner
+print('''
+\033[1;31m
+ ad8888888888ba
+dP'         `"8b,
+8  ,aaa,       "Y888a     ,aaaa,     ,aaa,  ,aa,
+8  8' `8           "8baaaad""""baaaad""""baad""8b
+8  8   8              """"      """"      ""    8b
+8  8, ,8         ,aaaaaaaaaaaaaaaaaaaaaaaaddddd88P
+8  `"""'       ,d8""
+Yb,         ,ad8"
+ "Y8888888888P"
+\033[0m
+''')
+
 try:
     while opt:
         print("""
-    Options:
-        1) Encrypt a file
-        2) Decrypt a file
-        3) Encrypt all files in a directory
-        4) Decrypt all files in a directory
-        5) Schrijven en versleutelen
-        6) Dagboek lezen
-        99) Quit
+
+    \033[1;42mOpties:\033[0m
+        \033[1;34m1)\033[0m Versleutel een bestand
+        \033[1;34m2)\033[0m Ontsleutel een bestand
+        \033[1;34m3)\033[0m Versleutel alle bestanden in een map
+        \033[1;34m4)\033[0m Ontsleutel alle bestanden in een map
+        \033[1;34m5)\033[0m Schrijven en versleutelen
+        \033[1;34m6)\033[0m Dagboek lezen
+        \033[1;34m99)\033[0m Afsluiten
         """)
         opt = raw_input("[#?] ")
         if opt == "1":
@@ -170,10 +191,10 @@ try:
         elif opt == "6":
             dagboek_lezen()
         elif opt == "99":
-            sys.exit()
+            sys.exit(0)
         else:
             print("[!] Invalid selection!")
 
 except KeyboardInterrupt:
     print("\n")
-    sys.exit()
+    sys.exit(0)
