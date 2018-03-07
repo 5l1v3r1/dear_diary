@@ -61,7 +61,7 @@ def schrijven():
 
         # Encrypt the file
         enc = './%s_%s.diary' % (time.strftime('%d-%m-%Y'), titel)
-        print('Saved:' + enc)
+        print('Saved: ' + enc)
         encrypt_file(enc, key)
         os.remove(enc)
 
