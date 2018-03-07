@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, getpass, time
+import os, sys, getpass, time, hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
 
@@ -44,9 +44,14 @@ def schrijven():
     except KeyboardInterrupt:
         # Write and Quit
         print('\n')
+        passwd = getpass.getpass("Password: ")
+        key = hashlib.sha256(passwd).digest()
+
+        # Debug
+        #print("Wachtwoord: ", key)
 
         # Tel het aantal regels
-        print('Regels: %i' % len(regels))
+        print('\nRegels: %i' % len(regels))
 
         # Schrijf de Regels
         with open('./%s_%s.diary' % (time.strftime('%d-%m-%Y'),titel), 'w+') as f:
@@ -56,7 +61,7 @@ def schrijven():
 
         # Encrypt the file
         enc = './%s_%s.diary' % (time.strftime('%d-%m-%Y'), titel)
-        print(enc)
+        print('Saved:' + enc)
         encrypt_file(enc, key)
         os.remove(enc)
 
@@ -82,6 +87,13 @@ def dagboek_lezen():
     try:
         num = input('#?: ')
 
+        # Opgeven wachtwoord
+        passwd = getpass.getpass("Password: ")
+        key = hashlib.sha256(passwd).digest()
+
+        # Debug
+        #print("Wachtwoord: ", key)
+
         # Ontsleutelen
         de_enc = dagboeken[int(num)]
         decrypt_file(de_enc, key)
@@ -100,6 +112,7 @@ def dagboek_lezen():
         print('[Error] %s\n' % e)
         num = input('#?: ')
 
+# Standaard sleutel om bestanden te versleutelen
 key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa1\xce\xc9\x9e\xb8e\x11\xa1\x8a'
 
 opt = True
