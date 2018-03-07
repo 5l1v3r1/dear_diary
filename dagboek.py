@@ -166,6 +166,8 @@ try:
         elif opt == "3":
             counter = 0
             enc = raw_input("Path to directory (encrypt): ")
+            passwd = getpass.getpass("Password: ")
+            key = hashlib.sha256(passwd).digest()
             for path, subdirs, files in os.walk(enc):
                 for name in files:
                     if name.endswith(".zez"):
@@ -179,6 +181,8 @@ try:
         elif opt == "4":
             counter = 0
             de_enc = raw_input("Path to directory (decrypt): ")
+            passwd = getpass.getpass("Password: ")
+            key = hashlib.sha256(passwd).digest()
             for path, subdirs, files in os.walk(de_enc):
                 for name in files:
                     # If it has an extention, it must be a file
