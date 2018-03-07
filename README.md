@@ -1,2 +1,4 @@
+![alt text](http://leonvoerman.nl/coding/dagboek.png)
+
 # dear_diary
-diary app written in python
+Diary app written in python
