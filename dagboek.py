@@ -153,10 +153,14 @@ try:
         opt = raw_input("[#?] ")
         if opt == "1":
             enc = raw_input("Path to file (encrypt): ")
+            passwd = getpass.getpass("Password: ")
+            key = hashlib.sha256(passwd).digest()
             encrypt_file(enc, key)
             os.remove(enc)
         elif opt == "2":
             de_enc = raw_input("Path to file (decrypt): ")
+            passwd = getpass.getpass("Password: ")
+            key = hashlib.sha256(passwd).digest()
             decrypt_file(de_enc + ".zez", key)
             os.remove(de_enc + ".zez")
         elif opt == "3":
