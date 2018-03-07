@@ -36,6 +36,13 @@ def decrypt_file(file_name, key):
 def schrijven():
     regels = []
     titel = raw_input('Titel: ')
+
+    # Bestand informatie
+    regels.append('Auteur: ' + getpass.getuser())
+    regels.append('Titel: ' + titel)
+    regels.append('Datum: ' + time.strftime('%d-%m-%Y') + ' ' + time.strftime('%X'))
+    regels.append(' ') # Blank
+
     try:
         while True:
             plaintxt = raw_input('>> ')
@@ -63,11 +70,7 @@ def schrijven():
         enc = './%s_%s.diary' % (time.strftime('%d-%m-%Y'), titel)
         print('Saved: ' + enc)
         encrypt_file(enc, key)
-        os.remove(enc)
-
-        # Print de regels
-        #for l in regels:
-        #    print(l)
+        os.remove(enc) # Verwijder plain bestand
 
 def dagboek_lezen():
     tel_boeken = -1
@@ -117,7 +120,7 @@ def dagboek_lezen():
         print('[Error] %s\n' % e)
         num = input('#?: ')
 
-# Standaard sleutel om bestanden te versleutelen
+# Standaard sleutel om bestanden te versleutelen.
 key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa1\xce\xc9\x9e\xb8e\x11\xa1\x8a'
 
 opt = True
@@ -153,21 +156,27 @@ try:
         opt = raw_input("[#?] ")
         if opt == "1":
             enc = raw_input("Path to file (encrypt): ")
+
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
+
             encrypt_file(enc, key)
             os.remove(enc)
         elif opt == "2":
             de_enc = raw_input("Path to file (decrypt): ")
+
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
+
             decrypt_file(de_enc + ".zez", key)
             os.remove(de_enc + ".zez")
         elif opt == "3":
             counter = 0
             enc = raw_input("Path to directory (encrypt): ")
+
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
+
             for path, subdirs, files in os.walk(enc):
                 for name in files:
                     if name.endswith(".zez"):
@@ -177,12 +186,15 @@ try:
                         print("[ Encrypting ] %s" % name)
                         counter = counter+1
                         os.remove(os.path.join(path, name))
+
             print("\n[ Done ] Encrypted %i files" % counter)
         elif opt == "4":
             counter = 0
             de_enc = raw_input("Path to directory (decrypt): ")
+
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
+
             for path, subdirs, files in os.walk(de_enc):
                 for name in files:
                     # If it has an extention, it must be a file
