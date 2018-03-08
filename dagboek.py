@@ -23,7 +23,7 @@ def encrypt_file(file_name, key):
     with open(file_name, 'rb') as fo:
         plaintext = fo.read()
     enc = encrypt(plaintext, key)
-    with open(file_name + ".zez", 'wb') as fo:
+    with open(file_name + ".key", 'wb') as fo:
         fo.write(enc)
 
 def decrypt_file(file_name, key):
@@ -61,7 +61,7 @@ def schrijven():
         print('\nRegels: %i' % len(regels))
 
         # Schrijf de Regels
-        with open('./%s_%s.diary' % (time.strftime('%d-%m-%Y'),titel), 'w+') as f:
+        with open('./%s_%s.diary' % (time.strftime('%d-%m-%Y'), titel), 'w+') as f:
             for l in regels:
                 f.write(l + '\n')
             f.close()
@@ -78,7 +78,7 @@ def dagboek_lezen():
 
     for path, subdirs, files in os.walk('.'):
         for name in files:
-            if name.endswith('.diary.zez'):
+            if name.endswith('.diary.key'):
                 tel_boeken += 1
                 dagboeken.append(path + '/' + name)
 
@@ -88,7 +88,7 @@ def dagboek_lezen():
         print('\t\033[1;96m%i)\033[0m ' % int(c) + items)
 
     try:
-        num = input('#?: ')
+        num = input('[#?] ')
 
         # Opgeven wachtwoord
         passwd = getpass.getpass("Password: ")
@@ -100,10 +100,9 @@ def dagboek_lezen():
         # Ontsleutelen
         de_enc = dagboeken[int(num)]
         decrypt_file(de_enc, key)
-        #os.remove(de_enc + ".zez")
 
         # Lezen
-        dagboek = open(dagboeken[int(num)].split('.zez')[0]).read()
+        dagboek = open(dagboeken[int(num)].split('.key')[0]).read()
 
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         print('\n')
@@ -112,7 +111,7 @@ def dagboek_lezen():
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
         # Verwijder het ontsleutelde dagboek
-        os.remove(dagboeken[int(num)].split('.zez')[0])
+        os.remove(dagboeken[int(num)].split('.key')[0])
 
     except KeyboardInterrupt:
         return
@@ -141,6 +140,7 @@ Yb,         ,ad8"
 ''')
 
 try:
+    # Menu
     while opt:
         print("""
 
@@ -157,6 +157,7 @@ try:
         if opt == "1":
             enc = raw_input("Path to file (encrypt): ")
 
+            # Set key
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
 
@@ -165,11 +166,12 @@ try:
         elif opt == "2":
             de_enc = raw_input("Path to file (decrypt): ")
 
+            # Set key
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
 
-            decrypt_file(de_enc + ".zez", key)
-            os.remove(de_enc + ".zez")
+            decrypt_file(de_enc + ".key", key)
+            os.remove(de_enc + ".key")
         elif opt == "3":
             counter = 0
             enc = raw_input("Path to directory (encrypt): ")
@@ -179,7 +181,7 @@ try:
 
             for path, subdirs, files in os.walk(enc):
                 for name in files:
-                    if name.endswith(".zez"):
+                    if name.endswith(".key"):
                         print("[ Skipped ] %s" % name)
                     elif "." in name:
                         encrypt_file(os.path.join(path, name), key)
@@ -192,13 +194,14 @@ try:
             counter = 0
             de_enc = raw_input("Path to directory (decrypt): ")
 
+            # Set key
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
 
             for path, subdirs, files in os.walk(de_enc):
                 for name in files:
                     # If it has an extention, it must be a file
-                    if name.endswith(".zez"):
+                    if name.endswith(".key"):
                         decrypt_file(os.path.join(path, name), key)
                         print("[ Decrypting ] %s" % name)
                         counter = counter+1
