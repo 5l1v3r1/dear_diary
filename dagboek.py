@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, getpass, time, hashlib
+import os, sys, getpass, time, hashlib, webbrowser
 from Crypto import Random
 from Crypto.Cipher import AES
 
@@ -23,7 +23,7 @@ def encrypt_file(file_name, key):
     with open(file_name, 'rb') as fo:
         plaintext = fo.read()
     enc = encrypt(plaintext, key)
-    with open(file_name + ".key", 'wb') as fo:
+    with open(file_name + ".zez", 'wb') as fo:
         fo.write(enc)
 
 def decrypt_file(file_name, key):
@@ -78,7 +78,7 @@ def dagboek_lezen():
 
     for path, subdirs, files in os.walk('.'):
         for name in files:
-            if name.endswith('.diary.key'):
+            if name.endswith('.diary.zez'):
                 tel_boeken += 1
                 dagboeken.append(path + '/' + name)
 
@@ -102,7 +102,7 @@ def dagboek_lezen():
         decrypt_file(de_enc, key)
 
         # Lezen
-        dagboek = open(dagboeken[int(num)].split('.key')[0]).read()
+        dagboek = open(dagboeken[int(num)].split('.zez')[0]).read()
 
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         print('\n')
@@ -111,13 +111,18 @@ def dagboek_lezen():
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
         # Verwijder het ontsleutelde dagboek
-        os.remove(dagboeken[int(num)].split('.key')[0])
+        os.remove(dagboeken[int(num)].split('.zez')[0])
 
     except KeyboardInterrupt:
         return
     except Exception as e:
         print('[Error] %s\n' % e)
         num = input('#?: ')
+
+def browser(page):
+    webbrowser.get().open(page)
+    sys.exit(0)
+
 
 # Standaard sleutel om bestanden te versleutelen.
 key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa1\xce\xc9\x9e\xb8e\x11\xa1\x8a'
@@ -144,13 +149,14 @@ try:
     while opt:
         print("""
 
-    \033[1;42mOpties:\033[0m
-        \033[1;34m1)\033[0m Versleutel een bestand
-        \033[1;34m2)\033[0m Ontsleutel een bestand
-        \033[1;34m3)\033[0m Versleutel alle bestanden in een map
-        \033[1;34m4)\033[0m Ontsleutel alle bestanden in een map
+    \033[1;42mOpties:\033[0m                                                \033[1;42mWebsites:\033[0m
+        \033[1;34m1)\033[0m Versleutel een bestand                              \033[1;34m91)\033[0m GitHub
+        \033[1;34m2)\033[0m Ontsleutel een bestand                              \033[1;34m92)\033[0m LinkedIn
+        \033[1;34m3)\033[0m Versleutel alle bestanden in een map                \033[1;34m93)\033[0m Twitter
+        \033[1;34m4)\033[0m Ontsleutel alle bestanden in een map                \033[1;34m94)\033[0m Facebook
         \033[1;34m5)\033[0m Schrijven en versleutelen
         \033[1;34m6)\033[0m Dagboek lezen
+
         \033[1;34m99)\033[0m Afsluiten
         """)
         opt = raw_input("[#?] ")
@@ -170,8 +176,8 @@ try:
             passwd = getpass.getpass("Password: ")
             key = hashlib.sha256(passwd).digest()
 
-            decrypt_file(de_enc + ".key", key)
-            os.remove(de_enc + ".key")
+            decrypt_file(de_enc + ".zez", key)
+            os.remove(de_enc + ".zez")
         elif opt == "3":
             counter = 0
             enc = raw_input("Path to directory (encrypt): ")
@@ -181,7 +187,7 @@ try:
 
             for path, subdirs, files in os.walk(enc):
                 for name in files:
-                    if name.endswith(".key"):
+                    if name.endswith(".zez"):
                         print("[ Skipped ] %s" % name)
                     elif "." in name:
                         encrypt_file(os.path.join(path, name), key)
@@ -201,7 +207,7 @@ try:
             for path, subdirs, files in os.walk(de_enc):
                 for name in files:
                     # If it has an extention, it must be a file
-                    if name.endswith(".key"):
+                    if name.endswith(".zez"):
                         decrypt_file(os.path.join(path, name), key)
                         print("[ Decrypting ] %s" % name)
                         counter = counter+1
@@ -213,6 +219,16 @@ try:
             schrijven()
         elif opt == "6":
             dagboek_lezen()
+
+        # Overige
+        elif opt == "91":
+            browser('https://github.com/leonv024')
+        elif opt == "92":
+            browser('https://www.linkedin.com/in/leon-voerman-29b003156/')
+        elif opt == "93":
+            browser('https://twitter.com/TheRealZeznzo')
+        elif opt == "94":
+            browser('https://facebook.com/')
         elif opt == "99":
             sys.exit(0)
         else:
