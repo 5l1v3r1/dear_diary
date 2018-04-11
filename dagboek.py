@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, getpass, time, hashlib, webbrowser
+import os, sys, getpass, time, hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
 
@@ -119,11 +119,6 @@ def dagboek_lezen():
         print('[Error] %s\n' % e)
         num = input('#?: ')
 
-def browser(page):
-    webbrowser.get().open(page)
-    sys.exit(0)
-
-
 # Standaard sleutel om bestanden te versleutelen.
 key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa1\xce\xc9\x9e\xb8e\x11\xa1\x8a'
 
@@ -149,11 +144,11 @@ try:
     while opt:
         print("""
 
-    \033[1;42mOpties:\033[0m                                                \033[1;42mWebsites:\033[0m
-        \033[1;34m1)\033[0m Versleutel een bestand                              \033[1;34m91)\033[0m GitHub
-        \033[1;34m2)\033[0m Ontsleutel een bestand                              \033[1;34m92)\033[0m LinkedIn
-        \033[1;34m3)\033[0m Versleutel alle bestanden in een map                \033[1;34m93)\033[0m Twitter
-        \033[1;34m4)\033[0m Ontsleutel alle bestanden in een map                \033[1;34m94)\033[0m Facebook
+    \033[1;42mOpties:\033[0m
+        \033[1;34m1)\033[0m Versleutel een bestand
+        \033[1;34m2)\033[0m Ontsleutel een bestand
+        \033[1;34m3)\033[0m Versleutel alle bestanden in een map
+        \033[1;34m4)\033[0m Ontsleutel alle bestanden in een map                
         \033[1;34m5)\033[0m Schrijven en versleutelen
         \033[1;34m6)\033[0m Dagboek lezen
 
@@ -219,18 +214,6 @@ try:
             schrijven()
         elif opt == "6":
             dagboek_lezen()
-
-        # Overige
-        elif opt == "91":
-            browser('https://github.com/leonv024')
-        elif opt == "92":
-            browser('https://www.linkedin.com/in/leon-voerman-29b003156/')
-        elif opt == "93":
-            browser('https://twitter.com/TheRealZeznzo')
-        elif opt == "94":
-            browser('https://facebook.com/')
-        elif opt == "99":
-            sys.exit(0)
         else:
             print("[!] Invalid selection!")
 
