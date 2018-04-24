@@ -52,11 +52,13 @@ class MainWindow(Tk):
         menu = Menu(self)
         menu.add_command(label="Quit!", command=self.quit)
         menu.add_command(label="Save File", command=self.save)
+        menu.add_command(label="Delete file", command=self.delete_file)
 
         self.config(menu=menu)
 
-        settings = LabelFrame(self, text = 'Settings', width = 450, height = 110)
+        settings = LabelFrame(self, text = 'Settings', width = 280, height = 180)
         settings.grid(row = 0, column = 1)
+        settings.grid_propagate(0)
 
         Label(settings, text = 'Title').grid(row = 0, column = 1)
         self.options['title'] = Entry(settings, textvariable = self.options['title'])
@@ -74,10 +76,11 @@ class MainWindow(Tk):
         self.options['textfield1'] = Text(textfield, foreground="black", background="white", highlightcolor="white", highlightbackground="black", height = 35, width = 100)
         self.options['textfield1'].grid(row = 0, column = 1)
 
-        select = LabelFrame(self, text = 'Select diary', relief = GROOVE, labelanchor = 'nw', width = 100, height = 50)
+        select = LabelFrame(self, text = 'Select diary', relief = GROOVE, labelanchor = 'nw', width = 360, height = 180)
         select.grid(row = 0, column = 2)
         self.options['list1'] = Listbox(select, width = 50, height = 10)
         self.options['list1'].grid(row = 0, column = 1)
+        select.grid_propagate(0)
         self.options['list1'].bind("<Double-Button-1>", self.open_file)
 
         tel_boeken = 0
@@ -85,6 +88,20 @@ class MainWindow(Tk):
             for name in files:
                 if name.endswith('.diary.zez'):
                     tel_boeken += 1
+                    self.options['list1'].insert(END, path + '/' + name)
+
+        self.title(string = 'Dear Diary | Aantal bestanden: %i' % tel_boeken)
+
+    def delete_file(self):
+        selected = self.options['list1'].get(self.options['list1'].curselection()) # Grab file
+        os.remove(selected)
+        self.options['list1'].delete(0, END)
+
+        tel_boeken = 0
+        for path, subdirs, files in os.walk('.'):
+            for name in files:
+                if name.endswith('.diary.zez'):
+                    tel_boeken +=1
                     self.options['list1'].insert(END, path + '/' + name)
 
         self.title(string = 'Dear Diary | Aantal bestanden: %i' % tel_boeken)
@@ -100,8 +117,12 @@ class MainWindow(Tk):
 
         key = hashlib.sha256(self.options['password'].get()).digest()
 
-        # Write file
+        # Write file with name: date + title + .diary
         with open('./%s_%s.diary' % (time.strftime('%d-%m-%Y'), self.options['title'].get()), 'w+') as f:
+            f.write('Auteur: ' + getpass.getuser() + '\n')
+            f.write('Titel: ' + self.options['title'].get() + '\n')
+            f.write('Datum: ' + time.strftime('%d-%m-%Y') + ' ' + time.strftime('%X') + '\n')
+            f.write('\n') # Blank
             f.write(self.options['textfield1'].get('1.0', END))
             f.close()
 
