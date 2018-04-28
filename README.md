@@ -4,7 +4,7 @@
 Diary app written in python
 
 
-## Installation
+## Install python crypto
 
 Linux
 ```Shell
