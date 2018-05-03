@@ -1,8 +1,16 @@
 #!/usr/bin/python
-import os, sys, getpass, time, hashlib
-from Crypto import Random
-from Crypto.Cipher import AES
+import os, sys, getpass, time, hashlib, webbrowser, platform
 from Tkinter import *
+
+try:
+    from Crypto import Random
+    from Crypto.Cipher import AES
+except ImportError:
+    if platform.system == 'Linux':
+        print('[ERROR] Python-Crypto is not installed, please do: apt install python-crypto -y and try again.')
+    elif platform.system == 'Windows':
+        print('[ERROR] Python-Crypto is not installed, please do: easy_install http://www.voidspace.org.uk/python/pycrypto-2.6.1/pycrypto-2.6.1.win32-py2.7.exe')
+
 
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
@@ -27,11 +35,11 @@ def encrypt_file(file_name, key):
         fo.write(enc)
 
 def decrypt_file(file_name, key):
+    # Read encrypted file
     with open(file_name, 'rb') as fo:
         ciphertext = fo.read()
-    dec = decrypt(ciphertext, key)
-    with open(file_name[:-4], 'wb') as fo:
-        fo.write(dec)
+    return decrypt(ciphertext, key) # Return data, decrypted
+
 
 # Standaard sleutel om bestanden te versleutelen. Doet standaard niks.
 key = b'\x01\xeb\xff\xe2\xca#\xacT\xf3\xfeKh\xc1{\x8b\x86\xa5\x96\\0\xbf\x93E\xa1\xce\xc9\x9e\xb8e\x11\xa1\x8a'
@@ -50,9 +58,23 @@ class MainWindow(Tk):
         }
 
         menu = Menu(self)
-        menu.add_command(label="Quit!", command=self.quit)
+        filemenu = Menu(tearoff=False)
+        contact = Menu(tearoff=False)
+        menu.add_cascade(label="File", menu=filemenu)
+        menu.add_cascade(label="Contact", menu=contact)
+
+        # File dropdown
+        filemenu.add_command(label="Save File", command=self.save)
+        filemenu.add_command(label="Delete File", command=self.delete_file)
+        filemenu.add_command(label="Quit", command=self.quit)
+
+        # Contact dropdown
+        contact.add_command(label="Twitter", command=self.open_twitter)
+        contact.add_command(label="GitHub", command=self.open_github)
+
+        # Quick access
         menu.add_command(label="Save File", command=self.save)
-        menu.add_command(label="Delete file", command=self.delete_file)
+        menu.add_command(label="Delete File", command=self.delete_file)
 
         self.config(menu=menu)
 
@@ -163,14 +185,15 @@ class MainWindow(Tk):
         key = hashlib.sha256(self.options['decryptpassword'].get()).digest() # Set key
         selection=self.options['list1'].get(self.options['list1'].curselection()) # Grab file
 
-        decrypt_file(selection, key) # Decryt file
-        dec_file = selection.split('.zez')[0]
-        dagboek = open(dec_file).read() # Open decrypted file
         self.options['textfield1'].delete('1.0', END) # Clear textfield
-        self.options['textfield1'].insert('1.0', dagboek) # Show content in textfield1
-        os.remove(dec_file) # Remove decrypted file
+        self.options['textfield1'].insert('1.0', decrypt_file(selection, key)) # Show content in textfield1
 
         self.enter_pwd.destroy()
+
+    def open_twitter(self):
+        webbrowser.open_new_tab('https://www.twitter.com/TheRealZeznzo')
+    def open_github(self):
+        webbrowser.open_new_tab('https://www.github.com/leonv024')
 
 
 if __name__ in '__main__':
