@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os, sys, getpass, time, hashlib, webbrowser, platform
 from Tkinter import *
+from ttk import *
 
 try:
     from Crypto import Random
@@ -49,6 +50,8 @@ class MainWindow(Tk):
         Tk.__init__(self)
         self.title(string = " Dear Diary ")
         self.resizable(0,0)
+        self.style = Style()
+        self.style.theme_use("clam")
 
         self.options = {
             'title' : StringVar(),
